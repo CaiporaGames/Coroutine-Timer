@@ -1,0 +1,74 @@
+using System.Collections;
+using UnityEngine;
+
+public class LTHorizontalMovement : MonoBehaviour
+{
+
+    [SerializeField] float distance = 3;
+    [SerializeField] float maxTime = 3;
+    [SerializeField] float delay = 3;
+    [SerializeField] bool flipSprite = false;
+    [SerializeField] bool startFromRight = false;
+
+    SpriteRenderer sprite;
+    float time;
+    float timer;
+
+    void Awake()
+    {
+        timer = 1 / maxTime;
+        sprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        if (startFromRight)
+        {
+            StartCoroutine(MoveRight());
+        }
+        else
+        {
+            StartCoroutine(MoveLeft());
+        }
+    }
+   
+  
+  
+    IEnumerator MoveLeft()
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (flipSprite)
+        {
+            sprite.flipX = true;
+        }
+
+        time = 0;
+        Vector3 local = transform.position;
+        while (time < maxTime)
+        {
+            yield return null;
+            time += Time.deltaTime;
+            transform.position = Vector3.Lerp(local, new Vector3(local.x - distance, local.y, 0), time * timer);
+
+        }
+        StartCoroutine(MoveRight());
+
+    }
+
+    IEnumerator MoveRight()
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (flipSprite)
+        {
+            sprite.flipX = false;
+        }
+        time = 0;
+        Vector3 local = transform.position;
+        while (time < maxTime)
+        {
+            yield return null;
+            time += Time.deltaTime;
+            transform.position = Vector3.Lerp(local, new Vector3(local.x + distance, local.y, 0), time * timer);
+
+        }
+        StartCoroutine(MoveLeft());
+    }
+}
